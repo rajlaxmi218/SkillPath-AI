@@ -1,4 +1,5 @@
 from assessment_analyzer import start_assessment, find_skill_gaps
+from roadmap_generator import generate_roadmap
 CAREER_SKILLS = {
     "DSA & Programming": [
         "Programming Fundamentals",
@@ -141,6 +142,7 @@ elif choice == "2":
     print("\nSkill Gaps:")
     for skill in skill_gaps:
         print("-", skill)
+    generate_roadmap(selected_career, results)
 
 else:
     print("\nInvalid choice. Please select 1 or 2.")
