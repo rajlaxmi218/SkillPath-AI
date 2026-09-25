@@ -99,10 +99,22 @@ CAREER_SKILLS = {
 }
 def get_career_skills(career):
     return CAREER_SKILLS.get(career, [])
-selected_career = "Web Development"
+print("Choose your career path:\n")
+
+career_list = list(CAREER_SKILLS.keys())
+
+for index, career in enumerate(career_list, start=1):
+    print(f"{index}. {career}")
+
+career_choice = input("\nEnter the number of your career path: ").strip()
+
+if career_choice.isdigit() and 1 <= int(career_choice) <= len(career_list):
+    selected_career = career_list[int(career_choice) - 1]
+else:
+    print("\nInvalid choice. Defaulting to Web Development.")
+    selected_career = "Web Development"
 
 skills = get_career_skills(selected_career)
-
 print("Selected Career:", selected_career)
 print("Required Skills:")
 
