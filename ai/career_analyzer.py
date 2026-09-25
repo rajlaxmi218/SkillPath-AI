@@ -132,6 +132,8 @@ if choice == "1":
     print("\nYou are a Complete Beginner.")
     print("Starting your roadmap from the basics.")
 
+    beginner_results = {skill: "Needs Improvement" for skill in skills}
+    generate_roadmap(selected_career, beginner_results)
 elif choice == "2":
     print("\nAssessment selected.")
     print("We will analyze your current skill level.\n")
@@ -146,8 +148,3 @@ elif choice == "2":
 
 else:
     print("\nInvalid choice. Please select 1 or 2.")
-if choice == "1":
-    print("\nBeginner Roadmap for", selected_career)
-
-    for week, skill in enumerate(skills, start=1):
-        print(f"Week {week}: Learn {skill}")
