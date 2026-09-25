@@ -135,7 +135,7 @@ elif choice == "2":
     print("\nAssessment selected.")
     print("We will analyze your current skill level.\n")
 
-    results = start_assessment(skills)
+    results = start_assessment(selected_career, skills)
     skill_gaps = find_skill_gaps(results)
 
     print("\nSkill Gaps:")
