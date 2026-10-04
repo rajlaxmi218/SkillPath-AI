@@ -95,3 +95,31 @@ def chat_with_ai(chat: ChatMessage):
         contents=chat.message
     )
     return {"reply": response.text}
+
+
+@app.get("/lesson/{topic}")
+def generate_lesson(topic: str):
+    prompt = f"""
+You are a patient, clear teacher creating a short lesson for a beginner student.
+
+Topic: {topic}
+
+Write a concise lesson that includes:
+1. A simple explanation of the concept (2-3 sentences)
+2. One small, clear code example or real-world example (if applicable)
+3. 2-3 key points to remember
+
+Keep it beginner-friendly and encouraging. Do not make it too long.
+"""
+
+    max_attempts = 3
+    for attempt in range(1, max_attempts + 1):
+        try:
+            response = gemini_client.models.generate_content(
+                model="gemini-3.5-flash-lite",
+                contents=prompt
+            )
+            return {"topic": topic, "lesson": response.text}
+        except Exception as e:
+            if attempt == max_attempts:
+                return {"topic": topic, "lesson": "Lesson unavailable right now. Please try again later.", "error": str(e)}
