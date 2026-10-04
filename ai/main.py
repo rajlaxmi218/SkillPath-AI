@@ -1,11 +1,12 @@
 from fastapi import FastAPI
-from pydantic import BaseModel 
+from pydantic import BaseModel
 from google import genai
 import os
-from dotenv import load_dotenv                                   # ← new import
+import json
+from dotenv import load_dotenv
 from career_analyzer_data import CAREER_SKILLS, get_career_skills
-from assessment_analyzer import CAREER_ASSESSMENTS, find_skill_gaps  # ← updated import
-from roadmap_generator import generate_roadmap                    # ← new import
+from assessment_analyzer import CAREER_ASSESSMENTS, find_skill_gaps
+from roadmap_generator import generate_roadmap
 
 app = FastAPI()
 
@@ -13,13 +14,13 @@ load_dotenv()
 gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
-class AssessmentSubmission(BaseModel):     # ← new class goes here, after app = FastAPI()
+class AssessmentSubmission(BaseModel):
     career: str
     answers: dict
 
 
 class ChatMessage(BaseModel):
-    message: str    
+    message: str
 
 
 @app.get("/")
@@ -58,7 +59,7 @@ def get_questions(career: str):
     return {"career": career, "questions": questions_list}
 
 
-@app.post("/assessment")                  # ← new endpoint goes here, at the bottom
+@app.post("/assessment")
 def submit_assessment(submission: AssessmentSubmission):
     career = submission.career
     answers = submission.answers
@@ -84,14 +85,14 @@ def submit_assessment(submission: AssessmentSubmission):
         "career": career,
         "skill_results": skill_results,
         "skill_gaps": skill_gaps,
-        "roadmap": roadmap 
+        "roadmap": roadmap
     }
 
 
 @app.post("/chat")
 def chat_with_ai(chat: ChatMessage):
     response = gemini_client.models.generate_content(
-        model="gemini-3.8-flash",
+        model="gemini-3.5-flash-lite",
         contents=chat.message
     )
     return {"reply": response.text}
@@ -123,3 +124,33 @@ Keep it beginner-friendly and encouraging. Do not make it too long.
         except Exception as e:
             if attempt == max_attempts:
                 return {"topic": topic, "lesson": "Lesson unavailable right now. Please try again later.", "error": str(e)}
+
+
+@app.get("/quiz/{topic}")
+def generate_quiz(topic: str):
+    prompt = f"""
+Create one multiple-choice question to test a beginner's knowledge of: {topic}
+
+Respond ONLY with valid JSON in exactly this format, and nothing else (no markdown, no explanation):
+{{
+  "question": "...",
+  "options": ["...", "...", "...", "..."],
+  "answer": "..."
+}}
+
+The "answer" must be exactly one of the strings in "options".
+"""
+
+    max_attempts = 3
+    for attempt in range(1, max_attempts + 1):
+        try:
+            response = gemini_client.models.generate_content(
+                model="gemini-3.5-flash-lite",
+                contents=prompt
+            )
+            cleaned_text = response.text.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+            quiz_data = json.loads(cleaned_text)
+            return {"topic": topic, "quiz": quiz_data}
+        except Exception as e:
+            if attempt == max_attempts:
+                return {"topic": topic, "quiz": None, "error": str(e)}
