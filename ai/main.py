@@ -28,6 +28,11 @@ class InterviewAnswer(BaseModel):
     question: str
     answer: str    
 
+class ReadinessRequest(BaseModel):
+    career: str
+    skill_results: dict
+    interview_feedback: str = ""    
+
 
 @app.get("/")
 def home():
@@ -211,4 +216,38 @@ Keep it encouraging and specific. Keep the response short (4-6 sentences total).
             return {"feedback": response.text.strip()}
         except Exception as e:
             if attempt == max_attempts:
-                return {"feedback": "Feedback unavailable right now. Please try again later.", "error": str(e)}            
+                return {"feedback": "Feedback unavailable right now. Please try again later.", "error": str(e)}
+
+@app.post("/readiness-report")
+def generate_readiness_report(submission: ReadinessRequest):
+    known_skills = [skill for skill, status in submission.skill_results.items() if status == "Known"]
+    gap_skills = [skill for skill, status in submission.skill_results.items() if status == "Needs Improvement"]
+
+    prompt = f"""
+You are a career mentor writing a final readiness report for a student pursuing: {submission.career}
+
+Skills they already know: {', '.join(known_skills) if known_skills else 'None yet'}
+Skills they still need to improve: {', '.join(gap_skills) if gap_skills else 'None - fully ready!'}
+
+Mock interview feedback they received: {submission.interview_feedback if submission.interview_feedback else 'No mock interview completed yet.'}
+
+Write a short, honest readiness report that includes:
+1. An overall readiness level (Not Ready / Getting There / Almost Ready / Job Ready)
+2. A brief summary of their strengths
+3. The key areas they should focus on before applying for jobs
+4. One encouraging closing sentence
+
+Keep it concise, honest, and motivating. Around 150 words.
+"""
+
+    max_attempts = 3
+    for attempt in range(1, max_attempts + 1):
+        try:
+            response = gemini_client.models.generate_content(
+                model="gemini-3.5-flash-lite",
+                contents=prompt
+            )
+            return {"career": submission.career, "readiness_report": response.text.strip()}
+        except Exception as e:
+            if attempt == max_attempts:
+                return {"career": submission.career, "readiness_report": "Report unavailable right now. Please try again later.", "error": str(e)}                        
