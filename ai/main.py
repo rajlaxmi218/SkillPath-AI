@@ -1,15 +1,25 @@
 from fastapi import FastAPI
-from pydantic import BaseModel                                    # ← new import
+from pydantic import BaseModel 
+from google import genai
+import os
+from dotenv import load_dotenv                                   # ← new import
 from career_analyzer_data import CAREER_SKILLS, get_career_skills
 from assessment_analyzer import CAREER_ASSESSMENTS, find_skill_gaps  # ← updated import
 from roadmap_generator import generate_roadmap                    # ← new import
 
 app = FastAPI()
 
+load_dotenv()
+gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
 
 class AssessmentSubmission(BaseModel):     # ← new class goes here, after app = FastAPI()
     career: str
     answers: dict
+
+
+class ChatMessage(BaseModel):
+    message: str    
 
 
 @app.get("/")
@@ -76,3 +86,12 @@ def submit_assessment(submission: AssessmentSubmission):
         "skill_gaps": skill_gaps,
         "roadmap": roadmap 
     }
+
+
+@app.post("/chat")
+def chat_with_ai(chat: ChatMessage):
+    response = gemini_client.models.generate_content(
+        model="gemini-3.8-flash",
+        contents=chat.message
+    )
+    return {"reply": response.text}
