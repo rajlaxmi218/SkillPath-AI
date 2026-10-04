@@ -23,6 +23,12 @@ class ChatMessage(BaseModel):
     message: str
 
 
+class InterviewAnswer(BaseModel):
+    career: str
+    question: str
+    answer: str    
+
+
 @app.get("/")
 def home():
     return {"message": "SkillPath AI backend is running"}
@@ -154,3 +160,55 @@ The "answer" must be exactly one of the strings in "options".
         except Exception as e:
             if attempt == max_attempts:
                 return {"topic": topic, "quiz": None, "error": str(e)}
+
+@app.get("/interview-question/{career}")
+def get_interview_question(career: str):
+    prompt = f"""
+You are a technical interviewer conducting a mock interview for a {career} position.
+
+Ask ONE realistic, common interview question suitable for a beginner-to-intermediate candidate in this field.
+It can be conceptual or practical.
+
+Respond with ONLY the question text, nothing else — no numbering, no extra commentary.
+"""
+
+    max_attempts = 3
+    for attempt in range(1, max_attempts + 1):
+        try:
+            response = gemini_client.models.generate_content(
+                model="gemini-3.5-flash-lite",
+                contents=prompt
+            )
+            return {"career": career, "question": response.text.strip()}
+        except Exception as e:
+            if attempt == max_attempts:
+                return {"career": career, "question": None, "error": str(e)}
+
+
+@app.post("/interview-feedback")
+def get_interview_feedback(submission: InterviewAnswer):
+    prompt = f"""
+You are a supportive technical interviewer reviewing a candidate's answer for a {submission.career} position.
+
+Interview Question: {submission.question}
+Candidate's Answer: {submission.answer}
+
+Give brief, constructive feedback that includes:
+1. What was good about the answer
+2. What could be improved or added
+3. A rating out of 5 for this answer
+
+Keep it encouraging and specific. Keep the response short (4-6 sentences total).
+"""
+
+    max_attempts = 3
+    for attempt in range(1, max_attempts + 1):
+        try:
+            response = gemini_client.models.generate_content(
+                model="gemini-3.5-flash-lite",
+                contents=prompt
+            )
+            return {"feedback": response.text.strip()}
+        except Exception as e:
+            if attempt == max_attempts:
+                return {"feedback": "Feedback unavailable right now. Please try again later.", "error": str(e)}            
