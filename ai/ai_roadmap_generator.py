@@ -1,4 +1,5 @@
 import os
+import time
 from dotenv import load_dotenv
 from google import genai
 
@@ -26,11 +27,21 @@ Create a week-by-week learning roadmap that:
 - Uses a simple "Week 1: ...", "Week 2: ..." format
 """
 
-    response = client.models.generate_content(
-        model="gemini-3.8-flash",
-        contents=prompt
-    )
-    return response.text
+    max_attempts = 3
+    for attempt in range(1, max_attempts + 1):
+        try:
+            response = client.models.generate_content(
+                model="gemini-3.5-flash-lite",
+                contents=prompt
+            )
+            return response.text
+        except Exception as e:
+            print(f"Attempt {attempt} failed: {e}")
+            if attempt < max_attempts:
+                print("Retrying in 5 seconds...")
+                time.sleep(5)
+            else:
+                return "AI roadmap unavailable right now. Please try again later."
 
 
 if __name__ == "__main__":
