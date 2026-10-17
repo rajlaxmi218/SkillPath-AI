@@ -7,11 +7,27 @@ from dotenv import load_dotenv
 from career_analyzer_data import CAREER_SKILLS, get_career_skills
 from assessment_analyzer import CAREER_ASSESSMENTS, find_skill_gaps
 from roadmap_generator import generate_roadmap
+import uuid
+from question_generator import generate_career_questions
 
 app = FastAPI()
 
 load_dotenv()
 gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+ASSESSMENT_SESSIONS = {}
+
+
+def fallback_questions(career):
+    questions = []
+    for skill, data in CAREER_ASSESSMENTS.get(career, {}).items():
+        questions.append({
+            "skill": skill,
+            "difficulty": "easy",
+            "question": data["question"],
+            "options": data["options"],
+            "answer": data["answer"]
+        })
+    return questions
 
 
 class AssessmentSubmission(BaseModel):
@@ -32,6 +48,9 @@ class ReadinessRequest(BaseModel):
     career: str
     skill_results: dict
     interview_feedback: str = ""    
+
+class AssessmentStartRequest(BaseModel):
+    career: str
 
 
 @app.get("/")
@@ -250,4 +269,40 @@ Keep it concise, honest, and motivating. Around 150 words.
             return {"career": submission.career, "readiness_report": response.text.strip()}
         except Exception as e:
             if attempt == max_attempts:
-                return {"career": submission.career, "readiness_report": "Report unavailable right now. Please try again later.", "error": str(e)}                        
+                return {"career": submission.career, "readiness_report": "Report unavailable right now. Please try again later.", "error": str(e)}       
+
+@app.post("/assessment/start")
+def start_assessment_session(request: AssessmentStartRequest):
+    skills = get_career_skills(request.career)
+    if not skills:
+        return {"error": f"'{request.career}' is not a valid career"}
+
+    questions = generate_career_questions(request.career, skills)
+    source = "ai"
+
+    if not questions:
+        questions = fallback_questions(request.career)
+        source = "fallback"
+
+    session_id = str(uuid.uuid4())
+    ASSESSMENT_SESSIONS[session_id] = {
+        "career": request.career,
+        "questions": questions
+    }
+
+    public_questions = []
+    for index, q in enumerate(questions):
+        public_questions.append({
+            "id": index,
+            "skill": q["skill"],
+            "question": q["question"],
+            "options": q["options"]
+        })
+
+    return {
+        "session_id": session_id,
+        "career": request.career,
+        "source": source,
+        "total_questions": len(public_questions),
+        "questions": public_questions
+    }                 
