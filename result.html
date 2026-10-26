@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillPath AI | Your Result</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background-color: #f4f5fa; color: #1a1a2e; }
+  a { text-decoration: none; color: inherit; }
+
+  .simple-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    background-color: white;
+    border-bottom: 1px solid #eee;
+  }
+  .simple-logo { display: flex; align-items: center; gap: 8px; }
+  .simple-logo-icon { font-size: 28px; }
+  .simple-logo h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; }
+  .highlight-ai { color: #4F63D2; }
+  .nav-links { display: flex; gap: 25px; align-items: center; font-size: 14px; color: #555; }
+  .logout-btn {
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+  }
+
+  .result-card {
+    background: white;
+    border-radius: 16px;
+    padding: 45px;
+    max-width: 580px;
+    margin: 50px auto;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  }
+  .result-card h1 { font-size: 22px; margin-bottom: 22px; }
+
+  .level-badge {
+    display: inline-block;
+    background: linear-gradient(to right, #4F63D2, #7c93f5);
+    color: white;
+    padding: 10px 26px;
+    border-radius: 24px;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+  }
+
+  .result-card .desc {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  .result-split {
+    display: flex;
+    gap: 16px;
+    text-align: left;
+    margin-bottom: 28px;
+  }
+  .result-col {
+    flex: 1;
+    background: #f4f6ff;
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .result-col h4 { font-size: 13px; margin-bottom: 10px; }
+  .result-col ul { list-style: none; font-size: 12px; color: #555; line-height: 1.9; }
+
+  .career-note {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 20px;
+  }
+  .career-note strong { color: #4F63D2; }
+
+  .btn-primary {
+    display: inline-block;
+    background: linear-gradient(to right, #4F63D2, #7c93f5);
+    color: white;
+    padding: 13px 28px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+  }
+
+  @media (max-width: 600px) {
+    .result-split { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="simple-header">
+  <div class="simple-logo">
+    <span class="simple-logo-icon">🚀</span>
+    <h2>SkillPath <span class="highlight-ai">AI</span></h2>
+  </div>
+  <div class="nav-links">
+    <a href="landing.html">Careers</a>
+    <a href="landing.html#how-it-works">How it works</a>
+    <a href="#" class="logout-btn">Log out</a>
+  </div>
+</div>
+
+<div class="result-card">
+  <h1 id="resultHeading">🎉 Assessment Complete!</h1>
+
+  <p style="font-size:13px; color:#888; margin-bottom:8px;">Your Current Skill Level</p>
+  <div class="level-badge" id="levelBadge">INTERMEDIATE</div>
+
+  <p class="desc" id="levelDesc">
+    You have a good foundation. Your next focus should be strengthening core concepts before moving to advanced topics.
+  </p>
+
+  <p class="career-note">Career path: <strong id="careerNote">Web Development</strong></p>
+
+  <div class="result-split">
+    <div class="result-col">
+      <h4>Your strengths</h4>
+      <ul id="strengthsList">
+        <li>✓ Fundamentals</li>
+        <li>✓ Core concepts</li>
+      </ul>
+    </div>
+    <div class="result-col">
+      <h4>Recommended focus</h4>
+      <ul id="focusList">
+        <li>→ Advanced topics</li>
+        <li>→ Hands-on practice</li>
+        <li>→ Real projects</li>
+      </ul>
+    </div>
+  </div>
+
+  <a href="dashboard.html" class="btn-primary">View My Personalized Roadmap →</a>
+</div>
+
+<script>
+  // Reads values saved by the assessment page, if present.
+  // Falls back to sensible defaults so this page works standalone too.
+  const savedLevel = localStorage.getItem('skillLevel') || 'Intermediate';
+  const savedCareer = localStorage.getItem('careerPath') || 'Web Development';
+
+  document.getElementById('levelBadge').textContent = savedLevel.toUpperCase();
+  document.getElementById('careerNote').textContent = savedCareer;
+
+  const descriptions = {
+    'Beginner': "You're just starting out. We'll begin with the fundamentals and build your skills step by step.",
+    'Intermediate': "You have a good foundation. Your next focus should be strengthening core concepts before moving to advanced topics.",
+    'Advanced': "You have strong existing skills. We'll focus on advanced concepts, system design and real-world projects."
+  };
+  document.getElementById('levelDesc').textContent =
+    descriptions[savedLevel] || descriptions['Intermediate'];
+
+  const headings = {
+    'Beginner': "🌱 Welcome, Beginner!",
+    'Intermediate': "🎉 Assessment Complete!",
+    'Advanced': "🚀 Impressive Skills!"
+  };
+  document.getElementById('resultHeading').textContent =
+    headings[savedLevel] || headings['Intermediate'];
+</script>
+
+</body>
+</html>

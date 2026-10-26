@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillPath AI | Mock Interview & Readiness</title>
+<link rel="stylesheet" href="dashboard.css">
+<style>
+  .content-wrap { max-width: 860px; }
+  .page-header { margin-bottom: 20px; }
+  .page-header h1 { font-size: 22px; margin-bottom: 4px; }
+  .page-header p { font-size: 13px; color: #888; }
+  .box { background: white; border-radius: 14px; padding: 22px; margin-bottom: 20px; }
+  .box h3 { font-size: 14px; margin-bottom: 12px; }
+
+  .ai-msg { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 18px; }
+  .ai-avatar { font-size: 28px; }
+  .ai-bubble { background: #f8f6ff; border-radius: 12px; padding: 14px 16px; font-size: 14px; color: #333; line-height: 1.6; }
+  .q-count { font-size: 11px; color: #999; margin-bottom: 4px; }
+
+  .mic-area { text-align: center; padding: 10px 0 5px; }
+  .mic-btn {
+    background: linear-gradient(to right, #7c5cff, #a78bfa); color: white; border: none;
+    padding: 14px 28px; border-radius: 30px; font-size: 14px; font-weight: bold; cursor: pointer;
+  }
+  .listening { display: none; color: #ef4444; font-size: 13px; margin-top: 10px; font-weight: bold; }
+  .listening.on { display: block; }
+  .transcript {
+    margin-top: 15px; min-height: 70px; background: #fafafa; border: 1px dashed #ddd;
+    border-radius: 10px; padding: 12px; font-size: 13px; color: #555; line-height: 1.6;
+  }
+  .next-btn {
+    display: none; margin: 15px auto 0; background: white; border: 1px solid #7c5cff; color: #7c5cff;
+    padding: 10px 24px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer;
+  }
+
+  #feedbackBox { display: none; }
+  .rating-row { display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0; border-bottom: 1px solid #f3f3f3; }
+  .stars { color: #f59e0b; letter-spacing: 2px; }
+  .fb-text { margin-top: 14px; background: #f8f6ff; border-radius: 10px; padding: 14px; font-size: 13px; color: #555; line-height: 1.6; }
+
+  .ready-row { display: flex; justify-content: space-between; font-size: 13px; padding: 10px 0; border-bottom: 1px solid #f3f3f3; }
+  .ready-row:last-child { border-bottom: none; }
+  .tag { font-weight: bold; }
+  .tag.strong { color: #22c55e; } .tag.good { color: #3b82f6; }
+  .tag.needs { color: #f59e0b; } .tag.improving { color: #7c5cff; }
+  .steps { margin: 0 0 0 18px; font-size: 13px; color: #555; line-height: 2; }
+  .continue-btn {
+    display: block; width: 100%; background: linear-gradient(to right, #7c5cff, #a78bfa); color: white;
+    text-align: center; padding: 14px; border-radius: 10px; font-weight: bold; font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="dashboard-container">
+
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="logo-icon">🚀</span>
+      <div class="logo-text">
+        <h2>SkillPath <span class="highlight-ai">AI</span></h2>
+        <p>Learn. Practice. Get Placed.</p>
+      </div>
+    </div>
+    <button id="menuToggle" class="menu-toggle">☰</button>
+    <nav class="nav-menu">
+      <ul>
+        <li><a href="dashboard.html"><span class="nav-icon">🏠</span> Home</a></li>
+        <li><a href="roadmap-learning.html"><span class="nav-icon">🗺️</span> Roadmap</a></li>
+        <li><a href="#"><span class="nav-icon">📖</span> Learn</a></li>
+        <li><a href="practice.html"><span class="nav-icon">💻</span> Practice</a></li>
+        <li><a href="progress.html"><span class="nav-icon">📊</span> Progress</a></li>
+        <li><a href="#"><span class="nav-icon">💼</span> Projects</a></li>
+        <li class="active"><a href="interview.html"><span class="nav-icon">🎙️</span> Interview Prep</a></li>
+        <li><a href="#"><span class="nav-icon">📚</span> Resources</a></li>
+        <li><a href="#"><span class="nav-icon">👥</span> Community</a></li>
+        <li><a href="#"><span class="nav-icon">🎖️</span> Certificates</a></li>
+        <li><a href="#"><span class="nav-icon">⚙️</span> Settings</a></li>
+      </ul>
+    </nav>
+    <div class="premium-box">
+      <p class="premium-title">👑 Go Premium</p>
+      <p class="premium-text">Unlock all features, AI interviews & premium content.</p>
+      <button class="upgrade-btn">Upgrade Now →</button>
+    </div>
+    <div class="help-box">
+      <span class="help-icon">🤖</span>
+      <div class="help-text">
+        <p class="help-title">Need Help?</p>
+        <p class="help-subtitle">Chat with our AI Assistant</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="topbar">
+      <div class="topbar-logo">
+        <span class="topbar-logo-icon">🚀</span>
+        <h2>SkillPath <span class="highlight-ai">AI</span></h2>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search topics, skills..." class="search-input">
+      </div>
+      <div class="notification"><span class="bell-icon">🔔</span></div>
+      <div class="user-profile">
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=SkillPathAI" alt="User profile picture" class="user-avatar">
+        <div class="user-info">
+          <p class="user-name">Alex Rivera</p>
+          <p class="user-plan">Premium Plan</p>
+        </div>
+        <span class="dropdown-arrow">▾</span>
+      </div>
+    </div>
+
+    <div class="content-wrap">
+      <div class="page-header">
+        <h1>AI Mock Interview</h1>
+        <p id="subtitle">Web Development • Intermediate</p>
+      </div>
+
+      <div class="box" id="interviewBox">
+        <div class="ai-msg">
+          <span class="ai-avatar">🤖</span>
+          <div>
+            <p class="q-count" id="qCount">Question 1 of 3</p>
+            <div class="ai-bubble" id="questionText">Hello! I'm your AI interviewer. Tell me about a project you have worked on.</div>
+          </div>
+        </div>
+
+        <div class="mic-area">
+          <button class="mic-btn" id="micBtn">🎙️ Start Speaking</button>
+          <p class="listening" id="listening">● Listening...</p>
+        </div>
+        <div class="transcript" id="transcript">Your answer will appear here...</div>
+        <button class="next-btn" id="nextBtn">Next Question →</button>
+      </div>
+
+      <div class="box" id="feedbackBox">
+        <h3>Interview Feedback</h3>
+        <div class="rating-row"><span>Technical Knowledge</span><span class="stars">★★★★☆</span></div>
+        <div class="rating-row"><span>Communication</span><span class="stars">★★★☆☆</span></div>
+        <div class="rating-row"><span>Answer Structure</span><span class="stars">★★★★☆</span></div>
+        <div class="rating-row"><span>Confidence</span><span class="stars">★★★☆☆</span></div>
+        <div class="fb-text">Good technical explanation. Try to structure your answers as: what the project was, what you built, and what you learned. Speak a little slower and avoid filler words.</div>
+      </div>
+
+      <div class="box" id="readinessBox" style="display:none;">
+        <h3>Readiness Report</h3>
+        <div class="ready-row"><span>Technical Skills</span><span class="tag strong">Strong</span></div>
+        <div class="ready-row"><span>Problem Solving</span><span class="tag good">Good</span></div>
+        <div class="ready-row"><span>Projects</span><span class="tag good">Good</span></div>
+        <div class="ready-row"><span>Communication</span><span class="tag needs">Needs Practice</span></div>
+        <div class="ready-row"><span>Interview Readiness</span><span class="tag improving">Improving</span></div>
+
+        <h3 style="margin-top:20px;">Recommended Next Steps</h3>
+        <ol class="steps">
+          <li>Practice explaining your projects out loud</li>
+          <li>Complete the API integration topic</li>
+          <li>Retake the mock interview next week</li>
+        </ol>
+        <br>
+        <a href="dashboard.html" class="continue-btn">Continue Preparing →</a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="dashboard.js"></script>
+<script>
+  const level = localStorage.getItem('skillLevel') || 'Intermediate';
+  const career = localStorage.getItem('careerPath') || 'Web Development';
+  document.getElementById('subtitle').textContent = career + ' • ' + level;
+
+  const questions = [
+    "Hello! I'm your AI interviewer. Tell me about a project you have worked on.",
+    "What was the hardest problem you faced while building it, and how did you solve it?",
+    "Why do you want to work in " + career + "?"
+  ];
+  const sampleAnswers = [
+    "I built a personal portfolio website using HTML, CSS and JavaScript with a responsive layout.",
+    "Making the navbar work on mobile was hard. I used a media query and a JavaScript toggle to fix it.",
+    "I enjoy building things people can use and I want to keep improving my skills."
+  ];
+  let current = 0;
+  let listeningTimer = null;
+
+  const micBtn = document.getElementById('micBtn');
+  const listening = document.getElementById('listening');
+  const transcript = document.getElementById('transcript');
+  const nextBtn = document.getElementById('nextBtn');
+
+  // Simulated speech (no real AI / speech recognition yet)
+  micBtn.addEventListener('click', function() {
+    micBtn.disabled = true;
+    listening.classList.add('on');
+    transcript.textContent = '';
+    listeningTimer = setTimeout(function() {
+      listening.classList.remove('on');
+      transcript.textContent = sampleAnswers[current];
+      nextBtn.style.display = 'block';
+    }, 2000);
+  });
+
+  nextBtn.addEventListener('click', function() {
+    current++;
+    if (current >= questions.length) {
+      document.getElementById('interviewBox').style.display = 'none';
+      document.getElementById('feedbackBox').style.display = 'block';
+      document.getElementById('readinessBox').style.display = 'block';
+      return;
+    }
+    document.getElementById('qCount').textContent = 'Question ' + (current + 1) + ' of ' + questions.length;
+    document.getElementById('questionText').textContent = questions[current];
+    transcript.textContent = 'Your answer will appear here...';
+    nextBtn.style.display = 'none';
+    micBtn.disabled = false;
+  });
+</script>
+</body>
+</html>

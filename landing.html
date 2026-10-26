@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SkillPath AI | Choose your career path</title>
+  <link rel="stylesheet" href="landing.css">
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <a class="logo" href="landing.html">
+      <span class="logo-icon">🚀</span>
+      <span class="logo-text">
+        <strong>SkillPath <em>AI</em></strong>
+        <small>Learn. Practice. Get Placed.</small>
+      </span>
+    </a>
+    <nav>
+      <a href="#careers">Careers</a>
+      <a href="#how">How it works</a>
+      <a href="login.html" class="btn btn-ghost">Log out</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Pick a career. We'll build the path.</h1>
+    <p>Choose the role you want, take a short skill check, and get a roadmap made for your level.</p>
+    <a href="#careers" class="btn btn-primary">Choose my career</a>
+  </section>
+
+  <!-- CAREER SELECTION -->
+  <section id="careers" class="section">
+    <h2>Choose your career path</h2>
+    <p class="sub">Select one. You can change it later from your dashboard.</p>
+
+    <div class="career-grid" id="careerGrid">
+      <button class="career-card" data-career="Web Developer">
+        <span class="icon">🌐</span><h3>Web Developer</h3><p>HTML, CSS, JavaScript, React</p>
+      </button>
+      <button class="career-card" data-career="Data Analyst">
+        <span class="icon">📊</span><h3>Data Analyst</h3><p>Excel, SQL, Power BI</p>
+      </button>
+      <button class="career-card" data-career="Data Scientist">
+        <span class="icon">🧪</span><h3>Data Scientist</h3><p>Python, statistics, ML</p>
+      </button>
+      <button class="career-card" data-career="AI / ML Engineer">
+        <span class="icon">🤖</span><h3>AI / ML Engineer</h3><p>Deep learning, model building</p>
+      </button>
+      <button class="career-card" data-career="Cybersecurity Analyst">
+        <span class="icon">🔒</span><h3>Cybersecurity Analyst</h3><p>Networks, threats, defence</p>
+      </button>
+      <button class="career-card" data-career="UI/UX Designer">
+        <span class="icon">🎨</span><h3>UI/UX Designer</h3><p>Figma, research, prototyping</p>
+      </button>
+      <button class="career-card" data-career="Cloud Engineer">
+        <span class="icon">☁️</span><h3>Cloud Engineer</h3><p>AWS, Linux, DevOps basics</p>
+      </button>
+      <button class="career-card" data-career="Mobile App Developer">
+        <span class="icon">📱</span><h3>Mobile App Developer</h3><p>Android, Flutter, React Native</p>
+      </button>
+      <button class="career-card" data-career="Software Engineer">
+        <span class="icon">💻</span><h3>Software Engineer</h3><p>DSA, OOP, system design</p>
+      </button>
+    </div>
+
+    <div class="selection-bar" id="selectionBar">
+      <p id="selectionText">No career selected yet</p>
+      <button class="btn btn-primary" id="continueBtn" disabled>Start skill assessment</button>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="section alt">
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li><h3>Take the assessment</h3><p>A short quiz shows where you stand today.</p></li>
+      <li><h3>See your level</h3><p>You're placed at Beginner, Intermediate or Advanced.</p></li>
+      <li><h3>Follow your roadmap</h3><p>Learn, practise and build projects in order.</p></li>
+      <li><h3>Get job-ready</h3><p>Practise interviews and track your readiness.</p></li>
+    </ol>
+  </section>
+
+  <footer>© 2026 SkillPath AI</footer>
+
+  <!-- CHATBOT (this page only) -->
+  <button class="chat-toggle" id="chatToggle" aria-label="Open chat">💬</button>
+
+  <div class="chat-window" id="chatWindow" hidden>
+    <div class="chat-head">
+      <strong>SkillPath Assistant</strong>
+      <button id="chatClose" aria-label="Close chat">✕</button>
+    </div>
+    <div class="chat-body" id="chatBody"></div>
+    <div class="chat-quick" id="chatQuick">
+      <button>Which career should I pick?</button>
+      <button>How does the assessment work?</button>
+      <button>Is SkillPath free?</button>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="chatInput" placeholder="Ask about careers..." autocomplete="off">
+      <button id="chatSend">Send</button>
+    </div>
+  </div>
+
+  <script src="landing.js"></script>
+</body>
+</html>

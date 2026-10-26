@@ -1,0 +1,24 @@
+/* Shared by assessment.html and result.html (loads after landing.css) */
+.page-wrap { max-width: 680px; margin: 0 auto; padding: 50px 5vw; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; }
+.card[hidden] { display: none; }
+.card h1 { font-size: 1.8rem; margin-bottom: 6px; }
+.card h2 { font-size: 1.3rem; margin: 10px 0 18px; }
+.card p { margin-bottom: 10px; }
+.start-options { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+
+/* Quiz */
+.progress { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; width: 0; background: var(--primary); transition: width .3s; }
+.counter { color: var(--muted); font-size: .9rem; margin-top: 10px; }
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option { text-align: left; padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px; background: var(--surface); font-family: inherit; font-size: 1rem; color: inherit; cursor: pointer; }
+.option:hover { border-color: var(--primary); }
+.option.selected { border-color: var(--primary); background: #eeedfd; }
+.quiz-actions { margin-top: 22px; display: flex; justify-content: space-between; }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+/* Result */
+.result-card { text-align: center; }
+.level-name { display: block; font-size: 2.4rem; font-weight: 800; color: var(--primary); margin: 4px 0 16px; }
+.result-card .btn { margin-top: 16px; }

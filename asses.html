@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillPath AI | Skill Assessment</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background-color: #f4f5fa; color: #1a1a2e; }
+  a { text-decoration: none; color: inherit; }
+
+  .simple-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    background-color: white;
+    border-bottom: 1px solid #eee;
+  }
+  .simple-logo { display: flex; align-items: center; gap: 8px; }
+  .simple-logo-icon { font-size: 28px; }
+  .simple-logo h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; }
+  .highlight-ai { color: #4F63D2; }
+  .nav-links { display: flex; gap: 25px; align-items: center; font-size: 14px; color: #555; }
+  .logout-btn { border: 1px solid #ddd; padding: 8px 16px; border-radius: 8px; font-weight: bold; }
+
+  .page-wrap { max-width: 640px; margin: 50px auto; padding: 0 20px; }
+
+  /* ===== INTRO SCREEN ===== */
+  #introScreen h1 { font-size: 26px; margin-bottom: 6px; }
+  #introScreen .career-line { font-size: 14px; color: #4F63D2; font-weight: bold; margin-bottom: 14px; }
+  #introScreen p.sub { font-size: 14px; color: #666; margin-bottom: 25px; }
+  .intro-buttons { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary {
+    background: linear-gradient(to right, #4F63D2, #7c93f5);
+    color: white;
+    padding: 13px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-text {
+    background: none;
+    border: none;
+    color: #555;
+    font-size: 14px;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  /* ===== QUIZ SCREEN ===== */
+  #quizScreen { display: none; }
+  .quiz-card {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  }
+  .quiz-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .progress-track {
+    height: 8px;
+    background-color: #eee;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .progress-track-fill {
+    height: 100%;
+    background: linear-gradient(to right, #4F63D2, #7c93f5);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+  }
+  .assessment-question { font-size: 17px; font-weight: bold; margin-bottom: 20px; }
+  .assessment-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+  .assessment-option {
+    background: #f8f9ff;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
+  }
+  .assessment-option:hover { border-color: #c7d0f7; }
+  .assessment-option.selected { border-color: #4F63D2; background: #eef1ff; }
+  .assessment-nav { display: flex; justify-content: space-between; }
+  .btn-outline {
+    background: white;
+    border: 1px solid #ccc;
+    color: #555;
+    padding: 11px 22px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .btn-outline:disabled { opacity: 0.4; cursor: not-allowed; }
+</style>
+</head>
+<body>
+
+<div class="simple-header">
+  <div class="simple-logo">
+    <span class="simple-logo-icon">🚀</span>
+    <h2>SkillPath <span class="highlight-ai">AI</span></h2>
+  </div>
+  <div class="nav-links">
+    <a href="landing.html">Careers</a>
+    <a href="landing.html#how-it-works">How it works</a>
+    <a href="#" class="logout-btn">Log out</a>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+  <!-- ===== INTRO SCREEN ===== -->
+  <div id="introScreen">
+    <h1>Skill assessment</h1>
+    <p class="career-line" id="careerLine">Career: Web Development</p>
+    <p class="sub">Answer a few questions so we can find your level and build your roadmap.</p>
+    <div class="intro-buttons">
+      <button class="btn-primary" id="startQuizBtn">Take the assessment</button>
+      <button class="btn-text" id="beginnerBtn">I'm a complete beginner</button>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ SCREEN ===== -->
+  <div id="quizScreen">
+    <div class="quiz-card">
+      <div class="quiz-top">
+        <span id="careerLabel">Web Development Assessment</span>
+        <span id="questionCounter">Question 1 of 5</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-track-fill" id="progressFill" style="width: 20%;"></div>
+      </div>
+      <div class="assessment-question" id="questionText"></div>
+      <div class="assessment-options" id="optionsWrap"></div>
+      <div class="assessment-nav">
+        <button class="btn-outline" id="prevBtn">Previous</button>
+        <button class="btn-primary" id="nextBtn">Next</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ===== QUESTION BANKS, KEYED BY CAREER NAME =====
+  const questionBanks = {
+    "Web Developer": [
+      { q: "Which technology is primarily used to structure the content of a webpage?", options: ["HTML", "CSS", "JavaScript", "Python"], correct: 0 },
+      { q: "What does CSS stand for?", options: ["Computer Style Sheets", "Cascading Style Sheets", "Creative Style System", "Colorful Style Sheets"], correct: 1 },
+      { q: "Which of these is used to make a webpage interactive?", options: ["HTML", "CSS", "JavaScript", "JSON"], correct: 2 },
+      { q: "What is the DOM?", options: ["A database model", "A styling language", "A programming language", "An in-memory representation of the page structure"], correct: 3 },
+      { q: "Which HTTP method is typically used to fetch data from an API?", options: ["GET", "POST", "DELETE", "PUT"], correct: 0 }
+    ],
+    "Data Analyst": [
+      { q: "Which tool is commonly used for writing database queries?", options: ["SQL", "HTML", "Figma", "Photoshop"], correct: 0 },
+      { q: "What does a VLOOKUP function do in Excel?", options: ["Deletes rows", "Looks up a value in a table", "Formats cells", "Creates a chart"], correct: 1 },
+      { q: "Which chart type is best for showing trends over time?", options: ["Pie chart", "Line chart", "Scatter plot", "Bar chart"], correct: 1 },
+      { q: "What is the term for cleaning and preparing raw data?", options: ["Data wrangling", "Data mining", "Data encryption", "Data compression"], correct: 0 },
+      { q: "Which Python library is commonly used for data analysis?", options: ["React", "Pandas", "Express", "Django"], correct: 1 }
+    ],
+    "Data Scientist": [
+      { q: "What is the goal of a regression model?", options: ["Classify categories", "Predict a continuous value", "Cluster data", "Reduce dimensions"], correct: 1 },
+      { q: "Which library is widely used for machine learning in Python?", options: ["scikit-learn", "jQuery", "Bootstrap", "Express"], correct: 0 },
+      { q: "What does 'overfitting' mean in a model?", options: ["Model performs well on new data", "Model is too simple", "Model memorizes training data but fails on new data", "Model has no errors"], correct: 2 },
+      { q: "Which statistic measures the spread of data?", options: ["Mean", "Standard deviation", "Mode", "Median"], correct: 1 },
+      { q: "What is a confusion matrix used for?", options: ["Visualizing clusters", "Evaluating classification performance", "Cleaning data", "Scaling features"], correct: 1 }
+    ],
+    "AI / ML Engineer": [
+      { q: "What is a neural network inspired by?", options: ["Computer circuits", "The human brain", "Database tables", "Web servers"], correct: 1 },
+      { q: "What does 'training' a model mean?", options: ["Deploying it to production", "Adjusting its parameters using data", "Deleting unused data", "Compressing the model"], correct: 1 },
+      { q: "Which of these is a popular deep learning framework?", options: ["TensorFlow", "Bootstrap", "Laravel", "jQuery"], correct: 0 },
+      { q: "What is an epoch in model training?", options: ["A single data point", "One full pass through the training data", "A type of neural layer", "An error metric"], correct: 1 },
+      { q: "What does LLM stand for?", options: ["Large Language Model", "Linear Learning Machine", "Logical Learning Method", "Layered Language Mapping"], correct: 0 }
+    ],
+    "Cybersecurity Analyst": [
+      { q: "What does 'phishing' refer to?", options: ["A type of firewall", "A tricking technique to steal information", "A network protocol", "An encryption method"], correct: 1 },
+      { q: "What is the purpose of a firewall?", options: ["Speed up a network", "Filter and control network traffic", "Store passwords", "Compress files"], correct: 1 },
+      { q: "What does VPN stand for?", options: ["Virtual Private Network", "Verified Public Network", "Virtual Protected Node", "Verified Private Node"], correct: 0 },
+      { q: "What is two-factor authentication?", options: ["Using two passwords", "An extra verification step beyond a password", "Encrypting data twice", "A type of firewall"], correct: 1 },
+      { q: "What is a common sign of a weak password?", options: ["Long and random", "Short and uses common words", "Uses symbols", "Uses a password manager"], correct: 1 }
+    ],
+    "UI/UX Designer": [
+      { q: "What does UX stand for?", options: ["User Experience", "Universal Export", "User Extension", "Unique Experience"], correct: 0 },
+      { q: "What is a wireframe?", options: ["A finished design", "A basic visual layout outline", "A coding framework", "A color palette"], correct: 1 },
+      { q: "Which tool is commonly used for UI design?", options: ["Figma", "Excel", "MySQL", "Postman"], correct: 0 },
+      { q: "What is a user persona?", options: ["A fictional character representing a user type", "A login screen", "A type of button", "A database record"], correct: 0 },
+      { q: "What is the purpose of usability testing?", options: ["Testing server speed", "Observing real users interact with a design", "Testing database queries", "Checking code syntax"], correct: 1 }
+    ],
+    "Cloud Engineer": [
+      { q: "What does AWS stand for?", options: ["Amazon Web Services", "Advanced Web Server", "Automated Web System", "Application Web Software"], correct: 0 },
+      { q: "What is a key benefit of cloud computing?", options: ["Fixed hardware costs", "On-demand scalability", "No internet needed", "Slower deployment"], correct: 1 },
+      { q: "What does DevOps focus on?", options: ["Only frontend design", "Combining development and operations practices", "Only database management", "Only UI testing"], correct: 1 },
+      { q: "What is a container (e.g. Docker) used for?", options: ["Storing passwords", "Packaging an application with its dependencies", "Designing UI", "Writing SQL queries"], correct: 1 },
+      { q: "Which Linux command lists files in a directory?", options: ["ls", "cd", "rm", "mkdir"], correct: 0 }
+    ],
+    "Mobile App Developer": [
+      { q: "Which language is commonly used for native Android development?", options: ["Kotlin", "Swift", "PHP", "Ruby"], correct: 0 },
+      { q: "What is Flutter primarily used for?", options: ["Backend APIs", "Cross-platform mobile app development", "Database management", "Server hosting"], correct: 1 },
+      { q: "What does API stand for?", options: ["Application Programming Interface", "Automated Program Instruction", "App Performance Index", "Application Process Integration"], correct: 0 },
+      { q: "What is React Native built on top of?", options: ["Java", "React (JavaScript)", "Swift", "Python"], correct: 1 },
+      { q: "What is a key difference between iOS and Android development?", options: ["They use the same exact tools", "Different OS, SDKs, and design guidelines", "No difference at all", "iOS doesn't support apps"], correct: 1 }
+    ],
+    "Software Engineer": [
+      { q: "What is the time complexity of binary search?", options: ["O(n)", "O(log n)", "O(n^2)", "O(1)"], correct: 1 },
+      { q: "Which data structure uses FIFO order?", options: ["Stack", "Queue", "Tree", "Graph"], correct: 1 },
+      { q: "What is OOP short for?", options: ["Object-Oriented Programming", "Open Operating Protocol", "Ordered Output Process", "Optimized Object Pattern"], correct: 0 },
+      { q: "What does a hash table provide on average?", options: ["O(n) lookup", "O(log n) lookup", "O(1) average lookup", "O(n^2) lookup"], correct: 2 },
+      { q: "What is recursion?", options: ["A loop that never ends", "A function calling itself", "A sorting algorithm", "A type of variable"], correct: 1 }
+    ]
+  };
+
+  // Generic fallback if the saved career name doesn't match any key above
+  const genericQuestions = [
+    { q: "How comfortable are you with the basics of this field?", options: ["Not at all", "Somewhat", "Fairly comfortable", "Very comfortable"], correct: 2 },
+    { q: "Have you built any small projects in this area before?", options: ["No, never", "One or two small ones", "A few solid projects", "Many projects"], correct: 2 },
+    { q: "How would you rate your problem-solving skills in this domain?", options: ["Beginner", "Developing", "Confident", "Advanced"], correct: 2 },
+    { q: "How often do you practice skills related to this career?", options: ["Rarely", "Occasionally", "Regularly", "Daily"], correct: 2 },
+    { q: "How confident are you explaining core concepts of this field to someone else?", options: ["Not confident", "Somewhat confident", "Confident", "Very confident"], correct: 2 }
+  ];
+
+  const savedCareer = localStorage.getItem('careerPath') || 'Web Developer';
+  const questions = questionBanks[savedCareer] || genericQuestions;
+
+  document.getElementById('careerLine').textContent = 'Career: ' + savedCareer;
+  document.getElementById('careerLabel').textContent = savedCareer + ' Assessment';
+
+  let currentIndex = 0;
+  const userAnswers = new Array(questions.length).fill(null);
+
+  function renderQuestion() {
+    const item = questions[currentIndex];
+    document.getElementById('questionText').textContent = item.q;
+    document.getElementById('questionCounter').textContent =
+      'Question ' + (currentIndex + 1) + ' of ' + questions.length;
+    document.getElementById('progressFill').style.width =
+      (((currentIndex + 1) / questions.length) * 100) + '%';
+
+    const optionsWrap = document.getElementById('optionsWrap');
+    optionsWrap.innerHTML = '';
+
+    item.options.forEach(function(optionText, index) {
+      const optionDiv = document.createElement('div');
+      optionDiv.className = 'assessment-option';
+      if (userAnswers[currentIndex] === index) {
+        optionDiv.classList.add('selected');
+      }
+      optionDiv.textContent = optionText;
+      optionDiv.addEventListener('click', function() {
+        userAnswers[currentIndex] = index;
+        renderQuestion();
+      });
+      optionsWrap.appendChild(optionDiv);
+    });
+
+    document.getElementById('prevBtn').disabled = currentIndex === 0;
+    document.getElementById('nextBtn').textContent =
+      currentIndex === questions.length - 1 ? 'Submit Assessment' : 'Next';
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', function() {
+    if (currentIndex > 0) {
+      currentIndex--;
+      renderQuestion();
+    }
+  });
+
+  document.getElementById('nextBtn').addEventListener('click', function() {
+    if (currentIndex < questions.length - 1) {
+      currentIndex++;
+      renderQuestion();
+    } else {
+      submitAssessment();
+    }
+  });
+
+  function submitAssessment() {
+    let correctCount = 0;
+    questions.forEach(function(item, index) {
+      if (userAnswers[index] === item.correct) {
+        correctCount++;
+      }
+    });
+
+    const percentage = (correctCount / questions.length) * 100;
+
+    let level;
+    if (percentage < 40) {
+      level = 'Beginner';
+    } else if (percentage < 75) {
+      level = 'Intermediate';
+    } else {
+      level = 'Advanced';
+    }
+
+    localStorage.setItem('skillLevel', level);
+    localStorage.setItem('careerPath', savedCareer);
+
+    window.location.href = 'result.html';
+  }
+
+  // ===== INTRO SCREEN BUTTONS =====
+  document.getElementById('startQuizBtn').addEventListener('click', function() {
+    document.getElementById('introScreen').style.display = 'none';
+    document.getElementById('quizScreen').style.display = 'block';
+    renderQuestion();
+  });
+
+  document.getElementById('beginnerBtn').addEventListener('click', function() {
+    localStorage.setItem('skillLevel', 'Beginner');
+    localStorage.setItem('careerPath', savedCareer);
+    window.location.href = 'result.html';
+  });
+</script>
+
+</body>
+</html>

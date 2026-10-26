@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillPath AI | Progress & Placement</title>
+<link rel="stylesheet" href="dashboard.css">
+<style>
+  .content-wrap { max-width: 860px; }
+  .page-header { margin-bottom: 20px; }
+  .page-header h1 { font-size: 22px; margin-bottom: 4px; }
+  .page-header p { font-size: 13px; color: #888; }
+
+  .tab-switcher { display: flex; gap: 8px; margin-bottom: 20px; }
+  .tab-switcher-btn {
+    background: white; border: 1px solid #eee; color: #888;
+    padding: 10px 22px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer;
+  }
+  .tab-switcher-btn.active {
+    background: linear-gradient(to right, #7c5cff, #a78bfa);
+    color: white; border-color: transparent;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
+  .stat-card { background: white; border-radius: 14px; padding: 18px; }
+  .stat-card .label { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .stat-card .value { font-size: 22px; font-weight: bold; }
+  .stat-card .sub { font-size: 11px; color: #999; margin-top: 4px; }
+  .bar { height: 6px; background: #eee; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+  .bar-fill { height: 100%; background: linear-gradient(to right, #7c5cff, #a78bfa); border-radius: 10px; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+  .box { background: white; border-radius: 14px; padding: 20px; }
+  .box h3 { font-size: 14px; margin-bottom: 12px; }
+  .box ul { list-style: none; font-size: 13px; color: #555; line-height: 2; }
+  .good li::before { content: "✓ "; color: #22c55e; font-weight: bold; }
+  .improve li::before { content: "→ "; color: #f59e0b; font-weight: bold; }
+
+  .week-row { display: flex; gap: 10px; margin-top: 8px; }
+  .day { flex: 1; text-align: center; font-size: 11px; color: #888; }
+  .day-dot { width: 28px; height: 28px; margin: 0 auto 6px; border-radius: 50%; background: #eee; }
+  .day-dot.on { background: #f97316; }
+
+  .rec-box { background: linear-gradient(135deg, #f8f6ff, #fdf2f8); border-radius: 14px; padding: 20px; font-size: 13px; color: #555; line-height: 1.6; }
+  .rec-box h3 { font-size: 14px; color: #1a1a2e; margin-bottom: 8px; }
+
+  .placement-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
+  .placement-card { background: white; border-radius: 14px; padding: 22px; text-align: center; }
+  .placement-card .icon { font-size: 28px; display: block; margin-bottom: 10px; }
+  .placement-card h3 { font-size: 15px; margin-bottom: 8px; }
+  .placement-card p { font-size: 12px; color: #888; line-height: 1.6; margin-bottom: 14px; }
+  .placement-btn {
+    display: inline-block; background: linear-gradient(to right, #7c5cff, #a78bfa);
+    color: white; padding: 9px 18px; border-radius: 8px; font-size: 12px; font-weight: bold;
+  }
+
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="dashboard-container">
+
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="logo-icon">🚀</span>
+      <div class="logo-text">
+        <h2>SkillPath <span class="highlight-ai">AI</span></h2>
+        <p>Learn. Practice. Get Placed.</p>
+      </div>
+    </div>
+    <button id="menuToggle" class="menu-toggle">☰</button>
+    <nav class="nav-menu">
+      <ul>
+        <li><a href="dashboard.html"><span class="nav-icon">🏠</span> Home</a></li>
+        <li><a href="roadmap-learning.html"><span class="nav-icon">🗺️</span> Roadmap</a></li>
+        <li><a href="#"><span class="nav-icon">📖</span> Learn</a></li>
+        <li><a href="practice.html"><span class="nav-icon">💻</span> Practice</a></li>
+        <li class="active"><a href="progress.html"><span class="nav-icon">📊</span> Progress</a></li>
+        <li><a href="#"><span class="nav-icon">💼</span> Projects</a></li>
+        <li><a href="interview.html"><span class="nav-icon">🎙️</span> Interview Prep</a></li>
+        <li><a href="#"><span class="nav-icon">📚</span> Resources</a></li>
+        <li><a href="#"><span class="nav-icon">👥</span> Community</a></li>
+        <li><a href="#"><span class="nav-icon">🎖️</span> Certificates</a></li>
+        <li><a href="#"><span class="nav-icon">⚙️</span> Settings</a></li>
+      </ul>
+    </nav>
+    <div class="premium-box">
+      <p class="premium-title">👑 Go Premium</p>
+      <p class="premium-text">Unlock all features, AI interviews & premium content.</p>
+      <button class="upgrade-btn">Upgrade Now →</button>
+    </div>
+    <div class="help-box">
+      <span class="help-icon">🤖</span>
+      <div class="help-text">
+        <p class="help-title">Need Help?</p>
+        <p class="help-subtitle">Chat with our AI Assistant</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="topbar">
+      <div class="topbar-logo">
+        <span class="topbar-logo-icon">🚀</span>
+        <h2>SkillPath <span class="highlight-ai">AI</span></h2>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search topics, skills..." class="search-input">
+      </div>
+      <div class="notification"><span class="bell-icon">🔔</span></div>
+      <div class="user-profile">
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=SkillPathAI" alt="User profile picture" class="user-avatar">
+        <div class="user-info">
+          <p class="user-name">Alex Rivera</p>
+          <p class="user-plan">Premium Plan</p>
+        </div>
+        <span class="dropdown-arrow">▾</span>
+      </div>
+    </div>
+
+    <div class="content-wrap">
+      <div class="page-header">
+        <h1>Progress & Placement</h1>
+        <p id="subtitle">Web Development • Intermediate</p>
+      </div>
+
+      <div class="tab-switcher">
+        <button class="tab-switcher-btn active" data-tab="progressTab">Progress</button>
+        <button class="tab-switcher-btn" data-tab="placementTab">Placement</button>
+      </div>
+
+      <!-- ===== PROGRESS TAB ===== -->
+      <div class="tab-panel active" id="progressTab">
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <p class="label">Current Level</p>
+            <p class="value" id="levelValue">Intermediate</p>
+          </div>
+          <div class="stat-card">
+            <p class="label">Topics Completed</p>
+            <p class="value">18 / 30</p>
+            <div class="bar"><div class="bar-fill" style="width: 60%;"></div></div>
+          </div>
+          <div class="stat-card">
+            <p class="label">Current Topic</p>
+            <p class="value" style="font-size:16px;">JavaScript Functions</p>
+            <p class="sub">In progress</p>
+          </div>
+          <div class="stat-card">
+            <p class="label">Learning Streak</p>
+            <p class="value">🔥 7 Days</p>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="box good">
+            <h3>Strengths</h3>
+            <ul>
+              <li>HTML</li>
+              <li>CSS</li>
+              <li>JavaScript fundamentals</li>
+            </ul>
+          </div>
+          <div class="box improve">
+            <h3>Areas to Improve</h3>
+            <ul>
+              <li>DOM manipulation</li>
+              <li>APIs</li>
+              <li>Async JavaScript</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="box" style="margin-bottom:20px;">
+          <h3>This Week's Activity</h3>
+          <div class="week-row">
+            <div class="day"><div class="day-dot on"></div>Mon</div>
+            <div class="day"><div class="day-dot on"></div>Tue</div>
+            <div class="day"><div class="day-dot on"></div>Wed</div>
+            <div class="day"><div class="day-dot on"></div>Thu</div>
+            <div class="day"><div class="day-dot on"></div>Fri</div>
+            <div class="day"><div class="day-dot"></div>Sat</div>
+            <div class="day"><div class="day-dot"></div>Sun</div>
+          </div>
+        </div>
+
+        <div class="rec-box">
+          <h3>🤖 AI Recommendation</h3>
+          Spend more time practicing API integration before starting advanced React.
+        </div>
+      </div>
+
+      <!-- ===== PLACEMENT TAB ===== -->
+      <div class="tab-panel" id="placementTab">
+
+        <div class="placement-grid">
+          <div class="placement-card">
+            <span class="icon">🧮</span>
+            <h3>Aptitude</h3>
+            <p>Quantitative aptitude, logical reasoning and verbal ability practice.</p>
+            <a href="#" class="placement-btn">Start Practice</a>
+          </div>
+          <div class="placement-card">
+            <span class="icon">💻</span>
+            <h3>Technical Round</h3>
+            <p>Programming, CS fundamentals, career-specific questions and coding.</p>
+            <a href="practice.html" class="placement-btn">Start Practice</a>
+          </div>
+          <div class="placement-card">
+            <span class="icon">🤖</span>
+            <h3>AI Interview</h3>
+            <p>Technical and behavioral questions with communication feedback from AI.</p>
+            <a href="interview.html" class="placement-btn">Start Interview</a>
+          </div>
+        </div>
+
+        <div class="box">
+          <h3>Placement Progress</h3>
+          <p style="font-size:12px; color:#888; margin-bottom:8px;">Complete more roadmap milestones to unlock advanced placement preparation.</p>
+          <div class="bar"><div class="bar-fill" style="width: 35%;"></div></div>
+          <p style="font-size:11px; color:#999; margin-top:6px;">35% ready</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="dashboard.js"></script>
+<script>
+  // Tab switching
+  const tabBtns = document.querySelectorAll('.tab-switcher-btn');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+  tabBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      tabBtns.forEach(function(b) { b.classList.remove('active'); });
+      tabPanels.forEach(function(p) { p.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById(btn.getAttribute('data-tab')).classList.add('active');
+    });
+  });
+
+  // Show the real level/career saved by the quiz
+  const level = localStorage.getItem('skillLevel') || 'Intermediate';
+  const career = localStorage.getItem('careerPath') || 'Web Development';
+  document.getElementById('levelValue').textContent = level;
+  document.getElementById('subtitle').textContent = career + ' • ' + level;
+</script>
+</body>
+</html>

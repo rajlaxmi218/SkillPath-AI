@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillPath AI | Skill Assessment</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background-color: #f4f5fa; color: #1a1a2e; }
+  a { text-decoration: none; color: inherit; }
+
+  .simple-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    background-color: white;
+    border-bottom: 1px solid #eee;
+  }
+  .simple-logo { display: flex; align-items: center; gap: 8px; }
+  .simple-logo-icon { font-size: 28px; }
+  .simple-logo h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; }
+  .highlight-ai { color: #4F63D2; }
+  .nav-links { display: flex; gap: 25px; align-items: center; font-size: 14px; color: #555; }
+  .logout-btn { border: 1px solid #ddd; padding: 8px 16px; border-radius: 8px; font-weight: bold; }
+
+  .page-wrap { max-width: 640px; margin: 50px auto; padding: 0 20px; }
+
+  .quiz-card {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  }
+  .quiz-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .progress-track {
+    height: 8px;
+    background-color: #eee;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .progress-track-fill {
+    height: 100%;
+    background: linear-gradient(to right, #4F63D2, #7c93f5);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+  }
+  .assessment-question { font-size: 17px; font-weight: bold; margin-bottom: 20px; }
+  .assessment-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+  .assessment-option {
+    background: #f8f9ff;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
+  }
+  .assessment-option:hover { border-color: #c7d0f7; }
+  .assessment-option.selected { border-color: #4F63D2; background: #eef1ff; }
+  .assessment-nav { display: flex; justify-content: space-between; }
+  .btn-primary {
+    background: linear-gradient(to right, #4F63D2, #7c93f5);
+    color: white;
+    padding: 11px 24px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-outline {
+    background: white;
+    border: 1px solid #ccc;
+    color: #555;
+    padding: 11px 22px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .btn-outline:disabled { opacity: 0.4; cursor: not-allowed; }
+</style>
+</head>
+<body>
+
+<div class="simple-header">
+  <div class="simple-logo">
+    <span class="simple-logo-icon">🚀</span>
+    <h2>SkillPath <span class="highlight-ai">AI</span></h2>
+  </div>
+  <div class="nav-links">
+    <a href="landing.html">Careers</a>
+    <a href="landing.html#how-it-works">How it works</a>
+    <a href="#" class="logout-btn">Log out</a>
+  </div>
+</div>
+
+<div class="page-wrap">
+  <div class="quiz-card">
+    <div class="quiz-top">
+      <span id="careerLabel">Web Development Assessment</span>
+      <span id="questionCounter">Question 1 of 10</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-track-fill" id="progressFill" style="width: 10%;"></div>
+    </div>
+    <div class="assessment-question" id="questionText"></div>
+    <div class="assessment-options" id="optionsWrap"></div>
+    <div class="assessment-nav">
+      <button class="btn-outline" id="prevBtn">Previous</button>
+      <button class="btn-primary" id="nextBtn">Next</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== QUESTION BANKS, KEYED BY CAREER NAME — 10 QUESTIONS EACH =====
+  const questionBanks = {
+    "Web Developer": [
+      { q: "Which technology is primarily used to structure the content of a webpage?", options: ["HTML", "CSS", "JavaScript", "Python"], correct: 0 },
+      { q: "What does CSS stand for?", options: ["Computer Style Sheets", "Cascading Style Sheets", "Creative Style System", "Colorful Style Sheets"], correct: 1 },
+      { q: "Which of these is used to make a webpage interactive?", options: ["HTML", "CSS", "JavaScript", "JSON"], correct: 2 },
+      { q: "What is the DOM?", options: ["A database model", "A styling language", "A programming language", "An in-memory representation of the page structure"], correct: 3 },
+      { q: "Which HTTP method is typically used to fetch data from an API?", options: ["GET", "POST", "DELETE", "PUT"], correct: 0 },
+      { q: "Which CSS layout system is designed for arranging items in a single row or column?", options: ["Flexbox", "Float", "Table", "Inline"], correct: 0 },
+      { q: "What do async/await help you work with in JavaScript?", options: ["CSS animations", "Promises and asynchronous code", "HTML forms", "Database schemas"], correct: 1 },
+      { q: "In the CSS box model, which is the correct order from innermost to outermost?", options: ["Content, Padding, Border, Margin", "Margin, Border, Padding, Content", "Border, Content, Margin, Padding", "Padding, Margin, Content, Border"], correct: 0 },
+      { q: "What best describes a REST API?", options: ["A type of database", "A set of conventions for building web services over HTTP", "A CSS framework", "A JavaScript testing tool"], correct: 1 },
+      { q: "What does 'responsive design' mean?", options: ["A website that loads instantly", "A design that adapts to different screen sizes", "A website with no images", "A design using only one color"], correct: 1 }
+    ],
+    "Data Analyst": [
+      { q: "Which tool is commonly used for writing database queries?", options: ["SQL", "HTML", "Figma", "Photoshop"], correct: 0 },
+      { q: "What does a VLOOKUP function do in Excel?", options: ["Deletes rows", "Looks up a value in a table", "Formats cells", "Creates a chart"], correct: 1 },
+      { q: "Which chart type is best for showing trends over time?", options: ["Pie chart", "Line chart", "Scatter plot", "Bar chart"], correct: 1 },
+      { q: "What is the term for cleaning and preparing raw data?", options: ["Data wrangling", "Data mining", "Data encryption", "Data compression"], correct: 0 },
+      { q: "Which Python library is commonly used for data analysis?", options: ["React", "Pandas", "Express", "Django"], correct: 1 },
+      { q: "What does the SQL 'GROUP BY' clause do?", options: ["Deletes duplicate rows", "Groups rows sharing a value to apply aggregate functions", "Sorts data alphabetically", "Creates a new table"], correct: 1 },
+      { q: "What is a pivot table used for?", options: ["Writing code", "Summarizing and reorganizing data interactively", "Designing a webpage", "Encrypting a file"], correct: 1 },
+      { q: "What does correlation measure between two variables?", options: ["Their exact values", "The strength and direction of their relationship", "Their total count", "Their file size"], correct: 1 },
+      { q: "What is an outlier in a dataset?", options: ["The average value", "A data point significantly different from others", "A missing value", "A duplicate entry"], correct: 1 },
+      { q: "Which chart type is best for comparing values across categories?", options: ["Scatter plot", "Bar chart", "Heatmap", "Histogram"], correct: 1 }
+    ],
+    "Data Scientist": [
+      { q: "What is the goal of a regression model?", options: ["Classify categories", "Predict a continuous value", "Cluster data", "Reduce dimensions"], correct: 1 },
+      { q: "Which library is widely used for machine learning in Python?", options: ["scikit-learn", "jQuery", "Bootstrap", "Express"], correct: 0 },
+      { q: "What does 'overfitting' mean in a model?", options: ["Model performs well on new data", "Model is too simple", "Model memorizes training data but fails on new data", "Model has no errors"], correct: 2 },
+      { q: "Which statistic measures the spread of data?", options: ["Mean", "Standard deviation", "Mode", "Median"], correct: 1 },
+      { q: "What is a confusion matrix used for?", options: ["Visualizing clusters", "Evaluating classification performance", "Cleaning data", "Scaling features"], correct: 1 },
+      { q: "What is the purpose of cross-validation?", options: ["To speed up training", "To test how well a model generalizes to unseen data", "To visualize data", "To clean missing values"], correct: 1 },
+      { q: "What does 'feature engineering' involve?", options: ["Deleting all data", "Creating or transforming input variables to improve model performance", "Writing unit tests", "Designing a UI"], correct: 1 },
+      { q: "What distinguishes supervised from unsupervised learning?", options: ["Supervised uses labeled data, unsupervised does not", "They are the same thing", "Unsupervised is always more accurate", "Supervised doesn't use data"], correct: 0 },
+      { q: "In hypothesis testing, what does a low p-value typically suggest?", options: ["The result is likely due to random chance", "Strong evidence against the null hypothesis", "The data is invalid", "The sample size is too small"], correct: 1 },
+      { q: "Which algorithm is commonly used for classification tasks?", options: ["Linear regression", "k-Nearest Neighbors (k-NN)", "PCA", "Clustering only"], correct: 1 }
+    ],
+    "AI / ML Engineer": [
+      { q: "What is a neural network inspired by?", options: ["Computer circuits", "The human brain", "Database tables", "Web servers"], correct: 1 },
+      { q: "What does 'training' a model mean?", options: ["Deploying it to production", "Adjusting its parameters using data", "Deleting unused data", "Compressing the model"], correct: 1 },
+      { q: "Which of these is a popular deep learning framework?", options: ["TensorFlow", "Bootstrap", "Laravel", "jQuery"], correct: 0 },
+      { q: "What is an epoch in model training?", options: ["A single data point", "One full pass through the training data", "A type of neural layer", "An error metric"], correct: 1 },
+      { q: "What does LLM stand for?", options: ["Large Language Model", "Linear Learning Machine", "Logical Learning Method", "Layered Language Mapping"], correct: 0 },
+      { q: "What is backpropagation used for in neural networks?", options: ["Loading data faster", "Updating weights by propagating the error backward", "Visualizing the model", "Cleaning the dataset"], correct: 1 },
+      { q: "What does gradient descent optimize?", options: ["Network speed", "The model's loss function", "Data storage", "User interface"], correct: 1 },
+      { q: "What is the difference between overfitting and underfitting?", options: ["There is no difference", "Overfitting memorizes training data; underfitting fails to learn patterns at all", "Underfitting is always better", "Overfitting means the model is too simple"], correct: 1 },
+      { q: "What is transfer learning?", options: ["Moving data between servers", "Reusing a pre-trained model on a new, related task", "Deleting old models", "Training from scratch every time"], correct: 1 },
+      { q: "What is the purpose of an activation function in a neural network?", options: ["To store data", "To introduce non-linearity so the network can learn complex patterns", "To clean input data", "To connect to a database"], correct: 1 }
+    ],
+    "Cybersecurity Analyst": [
+      { q: "What does 'phishing' refer to?", options: ["A type of firewall", "A tricking technique to steal information", "A network protocol", "An encryption method"], correct: 1 },
+      { q: "What is the purpose of a firewall?", options: ["Speed up a network", "Filter and control network traffic", "Store passwords", "Compress files"], correct: 1 },
+      { q: "What does VPN stand for?", options: ["Virtual Private Network", "Verified Public Network", "Virtual Protected Node", "Verified Private Node"], correct: 0 },
+      { q: "What is two-factor authentication?", options: ["Using two passwords", "An extra verification step beyond a password", "Encrypting data twice", "A type of firewall"], correct: 1 },
+      { q: "What is a common sign of a weak password?", options: ["Long and random", "Short and uses common words", "Uses symbols", "Uses a password manager"], correct: 1 },
+      { q: "What is the main purpose of encryption?", options: ["To delete sensitive data", "To make data unreadable without the correct key", "To speed up a network", "To back up files"], correct: 1 },
+      { q: "What does DDoS stand for?", options: ["Direct Data over Server", "Distributed Denial of Service", "Dual Domain Security", "Data Driven Operating System"], correct: 1 },
+      { q: "What is a vulnerability scan used for?", options: ["Speeding up a server", "Identifying security weaknesses in a system", "Designing a website", "Backing up a database"], correct: 1 },
+      { q: "What is social engineering in a security context?", options: ["A networking protocol", "Manipulating people into revealing confidential information", "A type of firewall", "A programming language"], correct: 1 },
+      { q: "What does a 'zero-day' vulnerability mean?", options: ["A flaw that has existed for zero days and is already patched", "A newly discovered flaw with no available fix yet", "A vulnerability that only affects old software", "A harmless bug"], correct: 1 }
+    ],
+    "UI/UX Designer": [
+      { q: "What does UX stand for?", options: ["User Experience", "Universal Export", "User Extension", "Unique Experience"], correct: 0 },
+      { q: "What is a wireframe?", options: ["A finished design", "A basic visual layout outline", "A coding framework", "A color palette"], correct: 1 },
+      { q: "Which tool is commonly used for UI design?", options: ["Figma", "Excel", "MySQL", "Postman"], correct: 0 },
+      { q: "What is a user persona?", options: ["A fictional character representing a user type", "A login screen", "A type of button", "A database record"], correct: 0 },
+      { q: "What is the purpose of usability testing?", options: ["Testing server speed", "Observing real users interact with a design", "Testing database queries", "Checking code syntax"], correct: 1 },
+      { q: "What is the purpose of a design style guide?", options: ["To store user passwords", "To keep visual elements (colors, fonts, spacing) consistent across a product", "To test server performance", "To write backend code"], correct: 1 },
+      { q: "What does 'accessibility' mean in design?", options: ["Making a product fast", "Making a product usable by people with diverse abilities", "Making a product colorful", "Making a product expensive"], correct: 1 },
+      { q: "What is A/B testing used for?", options: ["Testing server uptime", "Comparing two design versions to see which performs better", "Encrypting user data", "Writing documentation"], correct: 1 },
+      { q: "What is information architecture?", options: ["A database schema", "The structure and organization of content within a product", "A programming language", "A type of server"], correct: 1 },
+      { q: "What is the key difference between UI and UX?", options: ["They are identical", "UI focuses on visual interface, UX focuses on overall user experience and flow", "UX is only about colors", "UI is only about backend logic"], correct: 1 }
+    ],
+    "Cloud Engineer": [
+      { q: "What does AWS stand for?", options: ["Amazon Web Services", "Advanced Web Server", "Automated Web System", "Application Web Software"], correct: 0 },
+      { q: "What is a key benefit of cloud computing?", options: ["Fixed hardware costs", "On-demand scalability", "No internet needed", "Slower deployment"], correct: 1 },
+      { q: "What does DevOps focus on?", options: ["Only frontend design", "Combining development and operations practices", "Only database management", "Only UI testing"], correct: 1 },
+      { q: "What is a container (e.g. Docker) used for?", options: ["Storing passwords", "Packaging an application with its dependencies", "Designing UI", "Writing SQL queries"], correct: 1 },
+      { q: "Which Linux command lists files in a directory?", options: ["ls", "cd", "rm", "mkdir"], correct: 0 },
+      { q: "What does 'auto-scaling' mean in cloud infrastructure?", options: ["Manually adding servers", "Automatically adjusting resources based on demand", "Deleting unused files", "Encrypting data at rest"], correct: 1 },
+      { q: "What is the purpose of a load balancer?", options: ["To store backups", "To distribute incoming traffic across multiple servers", "To compress files", "To design a UI"], correct: 1 },
+      { q: "What does IaaS stand for?", options: ["Infrastructure as a Service", "Internet as a Service", "Information as a System", "Integration as a Service"], correct: 0 },
+      { q: "What is the purpose of a CI/CD pipeline?", options: ["To design logos", "To automate building, testing, and deploying code", "To manage payroll", "To store passwords"], correct: 1 },
+      { q: "What does 'serverless computing' mean?", options: ["There are no servers involved anywhere", "Developers run code without managing the underlying server infrastructure", "It only works offline", "It is slower than traditional hosting"], correct: 1 }
+    ],
+    "Mobile App Developer": [
+      { q: "Which language is commonly used for native Android development?", options: ["Kotlin", "Swift", "PHP", "Ruby"], correct: 0 },
+      { q: "What is Flutter primarily used for?", options: ["Backend APIs", "Cross-platform mobile app development", "Database management", "Server hosting"], correct: 1 },
+      { q: "What does API stand for?", options: ["Application Programming Interface", "Automated Program Instruction", "App Performance Index", "Application Process Integration"], correct: 0 },
+      { q: "What is React Native built on top of?", options: ["Java", "React (JavaScript)", "Swift", "Python"], correct: 1 },
+      { q: "What is a key difference between iOS and Android development?", options: ["They use the same exact tools", "Different OS, SDKs, and design guidelines", "No difference at all", "iOS doesn't support apps"], correct: 1 },
+      { q: "What distinguishes a native app from a hybrid app?", options: ["There is no difference", "Native apps are built specifically for one platform using its own SDK, hybrid apps use a shared codebase wrapped in a native container", "Hybrid apps can't run on phones", "Native apps don't need an SDK"], correct: 1 },
+      { q: "What does APK stand for?", options: ["Android Package Kit", "Application Programming Key", "App Performance Kit", "Android Platform Kernel"], correct: 0 },
+      { q: "Why are lifecycle methods (e.g., onCreate, onResume) important in mobile development?", options: ["They style the app", "They let you manage app behavior as it moves between states (foreground/background)", "They connect to a database", "They are not important"], correct: 1 },
+      { q: "What is a push notification used for?", options: ["Deleting app data", "Sending timely messages/alerts to users even when the app is closed", "Compiling the app", "Styling the UI"], correct: 1 },
+      { q: "What does 'responsive UI' mean for mobile apps?", options: ["The UI never changes", "The UI adapts smoothly to different screen sizes and orientations", "The UI loads faster", "The UI uses only one color"], correct: 1 }
+    ],
+    "Software Engineer": [
+      { q: "What is the time complexity of binary search?", options: ["O(n)", "O(log n)", "O(n^2)", "O(1)"], correct: 1 },
+      { q: "Which data structure uses FIFO order?", options: ["Stack", "Queue", "Tree", "Graph"], correct: 1 },
+      { q: "What is OOP short for?", options: ["Object-Oriented Programming", "Open Operating Protocol", "Ordered Output Process", "Optimized Object Pattern"], correct: 0 },
+      { q: "What does a hash table provide on average?", options: ["O(n) lookup", "O(log n) lookup", "O(1) average lookup", "O(n^2) lookup"], correct: 2 },
+      { q: "What is recursion?", options: ["A loop that never ends", "A function calling itself", "A sorting algorithm", "A type of variable"], correct: 1 },
+      { q: "What does Big-O notation describe?", options: ["The exact runtime in seconds", "The upper-bound growth rate of an algorithm's time or space usage", "The number of bugs in code", "The file size of a program"], correct: 1 },
+      { q: "What is a linked list?", options: ["A fixed-size array", "A sequence of nodes where each points to the next", "A type of database", "A sorting algorithm"], correct: 1 },
+      { q: "What does version control (e.g. Git) help developers do?", options: ["Design user interfaces", "Track and manage changes to code over time", "Compile code faster", "Encrypt passwords"], correct: 1 },
+      { q: "What is the main difference between a stack and a queue?", options: ["There is no difference", "A stack is LIFO (last-in-first-out), a queue is FIFO (first-in-first-out)", "A queue can only hold numbers", "A stack is always faster"], correct: 1 },
+      { q: "What is the purpose of unit testing?", options: ["To test the entire application manually", "To verify that individual pieces of code work correctly in isolation", "To design the UI", "To deploy the application"], correct: 1 }
+    ]
+  };
+
+  const genericQuestions = [
+    { q: "How comfortable are you with the basics of this field?", options: ["Not at all", "Somewhat", "Fairly comfortable", "Very comfortable"], correct: 2 },
+    { q: "Have you built any small projects in this area before?", options: ["No, never", "One or two small ones", "A few solid projects", "Many projects"], correct: 2 },
+    { q: "How would you rate your problem-solving skills in this domain?", options: ["Beginner", "Developing", "Confident", "Advanced"], correct: 2 },
+    { q: "How often do you practice skills related to this career?", options: ["Rarely", "Occasionally", "Regularly", "Daily"], correct: 2 },
+    { q: "How confident are you explaining core concepts of this field to someone else?", options: ["Not confident", "Somewhat confident", "Confident", "Very confident"], correct: 2 },
+    { q: "How would you describe your experience with the tools used in this field?", options: ["No experience", "Limited exposure", "Regular use", "Expert-level use"], correct: 2 },
+    { q: "How do you typically approach a new challenge in this field?", options: ["I avoid it", "I ask for help immediately", "I try to solve it myself first", "I solve it confidently and help others"], correct: 2 },
+    { q: "How often do you stay updated with trends in this field?", options: ["Never", "Rarely", "Often", "Constantly"], correct: 2 },
+    { q: "How would you rate your overall readiness for a job in this field?", options: ["Not ready at all", "Somewhat ready", "Mostly ready", "Fully ready"], correct: 2 },
+    { q: "How many real-world tasks in this field have you completed independently?", options: ["None", "One or two", "Several", "Many"], correct: 2 }
+  ];
+
+  const savedCareer = localStorage.getItem('careerPath') || 'Web Developer';
+  const questions = questionBanks[savedCareer] || genericQuestions;
+
+  document.getElementById('careerLabel').textContent = savedCareer + ' Assessment';
+
+  let currentIndex = 0;
+  const userAnswers = new Array(questions.length).fill(null);
+
+  function renderQuestion() {
+    const item = questions[currentIndex];
+    document.getElementById('questionText').textContent = item.q;
+    document.getElementById('questionCounter').textContent =
+      'Question ' + (currentIndex + 1) + ' of ' + questions.length;
+    document.getElementById('progressFill').style.width =
+      (((currentIndex + 1) / questions.length) * 100) + '%';
+
+    const optionsWrap = document.getElementById('optionsWrap');
+    optionsWrap.innerHTML = '';
+
+    item.options.forEach(function(optionText, index) {
+      const optionDiv = document.createElement('div');
+      optionDiv.className = 'assessment-option';
+      if (userAnswers[currentIndex] === index) {
+        optionDiv.classList.add('selected');
+      }
+      optionDiv.textContent = optionText;
+      optionDiv.addEventListener('click', function() {
+        userAnswers[currentIndex] = index;
+        renderQuestion();
+      });
+      optionsWrap.appendChild(optionDiv);
+    });
+
+    document.getElementById('prevBtn').disabled = currentIndex === 0;
+    document.getElementById('nextBtn').textContent =
+      currentIndex === questions.length - 1 ? 'Submit Assessment' : 'Next';
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', function() {
+    if (currentIndex > 0) {
+      currentIndex--;
+      renderQuestion();
+    }
+  });
+
+  document.getElementById('nextBtn').addEventListener('click', function() {
+    if (currentIndex < questions.length - 1) {
+      currentIndex++;
+      renderQuestion();
+    } else {
+      submitAssessment();
+    }
+  });
+
+  function submitAssessment() {
+    let correctCount = 0;
+    questions.forEach(function(item, index) {
+      if (userAnswers[index] === item.correct) {
+        correctCount++;
+      }
+    });
+
+    const percentage = (correctCount / questions.length) * 100;
+
+    let level;
+    if (percentage < 40) {
+      level = 'Beginner';
+    } else if (percentage < 75) {
+      level = 'Intermediate';
+    } else {
+      level = 'Advanced';
+    }
+
+    localStorage.setItem('skillLevel', level);
+    localStorage.setItem('careerPath', savedCareer);
+
+    window.location.href = 'result.html';
+  }
+
+  renderQuestion();
+</script>
+
+</body>
+</html>
