@@ -87,3 +87,41 @@ chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(
 chatQuick.addEventListener('click', e => {
   if (e.target.tagName === 'BUTTON') sendMessage(e.target.textContent);
 });
+const chatToggle = document.getElementById('chatToggle');
+const chatBox = document.getElementById('chatBox');
+const chatMessages = document.getElementById('chatMessages');
+const chatInput = document.getElementById('chatInput');
+
+chatToggle.addEventListener('click', function() { chatBox.classList.toggle('open'); });
+document.getElementById('chatClose').addEventListener('click', function() { chatBox.classList.remove('open'); });
+
+function addMsg(text, who) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + who;
+  div.textContent = text;
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function botReply(text) {
+  const t = text.toLowerCase();
+  if (t.includes('beginner') || t.includes('nothing') || t.includes('start'))
+    return "No problem! Pick Web Developer as a first step, or choose 'I'm a complete beginner' on the assessment page.";
+  if (t.includes('design') || t.includes('creative')) return "You may enjoy UI/UX Designer.";
+  if (t.includes('data') || t.includes('math')) return "Data Analyst or Data Scientist could suit you.";
+  if (t.includes('ai') || t.includes('machine')) return "Take a look at AI / ML Engineer.";
+  if (t.includes('security') || t.includes('hack')) return "Cybersecurity Analyst might be a good fit.";
+  if (t.includes('web') || t.includes('website')) return "Web Developer is a great place to begin.";
+  return "Tell me what you enjoy (design, data, AI, security, websites) and I'll suggest a path.";
+}
+
+function sendMessage() {
+  const text = chatInput.value.trim();
+  if (!text) return;
+  addMsg(text, 'user');
+  chatInput.value = '';
+  setTimeout(function() { addMsg(botReply(text), 'bot'); }, 500);
+}
+
+document.getElementById('chatSend').addEventListener('click', sendMessage);
+chatInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') sendMessage(); });

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillPath AI | Roadmap & Learning</title>
+<link rel="stylesheet" href="dashboard.css">
+<style>
+  .content-wrap { max-width: 800px; }
+  .roadmap-page-header { margin-bottom: 20px; }
+  .roadmap-page-header h1 { font-size: 22px; margin-bottom: 4px; }
+  .roadmap-page-header p { font-size: 13px; color: #888; }
+
+  .timeline-wrap { background: white; border-radius: 16px; padding: 25px; }
+  .timeline-item {
+    display: flex;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+  }
+  .timeline-item:last-child { border-bottom: none; }
+  .timeline-marker {
+    width: 30px; height: 30px; min-width: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: white;
+  }
+  .timeline-item.completed .timeline-marker { background-color: #22c55e; }
+  .timeline-item.current .timeline-marker { background: linear-gradient(to right, #7c5cff, #a78bfa); }
+  .timeline-item.upcoming .timeline-marker { background-color: #ccc; }
+  .timeline-text { flex: 1; }
+  .timeline-text h3 { font-size: 15px; margin-bottom: 2px; }
+  .timeline-text p { font-size: 12px; color: #888; }
+  .timeline-status {
+    font-size: 11px;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 20px;
+    height: fit-content;
+    white-space: nowrap;
+  }
+  .timeline-item.completed .timeline-status { background: #dcfce7; color: #22c55e; }
+  .timeline-item.current .timeline-status { background: #dbeafe; color: #3b82f6; }
+  .timeline-item.upcoming .timeline-status { background: #f1f1f1; color: #999; }
+
+  .lesson-panel {
+    display: none;
+    background: #f8f6ff;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 0 0 15px 45px;
+    font-size: 13px;
+  }
+  .lesson-panel.open { display: block; }
+  .lesson-panel h4 { font-size: 14px; margin-bottom: 8px; }
+  .lesson-panel p { color: #555; margin-bottom: 12px; line-height: 1.6; }
+  .lesson-panel code {
+    display: block;
+    background: #1a1a2e;
+    color: #a78bfa;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    margin: 10px 0;
+    white-space: pre-wrap;
+    font-family: 'Consolas', monospace;
+  }
+  .lesson-panel ul { margin: 0 0 12px 18px; color: #555; line-height: 1.8; }
+  .lesson-actions { display: flex; gap: 10px; margin-top: 15px; }
+  .lesson-actions button {
+    flex: 1;
+    padding: 11px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+  }
+  .lesson-actions .quiz-btn { background: white; border: 1px solid #7c5cff; color: #7c5cff; }
+  .lesson-actions .practice-btn { background: white; border: 1px solid #7c5cff; color: #7c5cff; }
+  .lesson-actions .complete-btn { background: linear-gradient(to right, #7c5cff, #a78bfa); color: white; }
+</style>
+</head>
+<body>
+<div class="dashboard-container">
+
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="logo-icon">🚀</span>
+      <div class="logo-text">
+        <h2>SkillPath <span class="highlight-ai">AI</span></h2>
+        <p>Learn. Practice. Get Placed.</p>
+      </div>
+    </div>
+    <button id="menuToggle" class="menu-toggle">☰</button>
+    <nav class="nav-menu">
+      <ul>
+        <li><a href="dashboard.html"><span class="nav-icon">🏠</span> Home</a></li>
+        <li class="active"><a href="roadmap-learning.html"><span class="nav-icon">🗺️</span> Roadmap</a></li>
+        <li><a href="#"><span class="nav-icon">📖</span> Learn</a></li>
+        <li><a href="practice.html"><span class="nav-icon">💻</span> Practice</a></li>
+        <li><a href="progress.html"><span class="nav-icon">📊</span> Progress</a></li>
+        <li><a href="#"><span class="nav-icon">💼</span> Projects</a></li>
+        <li><a href="interview.html"><span class="nav-icon">🎙️</span> Interview Prep</a></li>
+        <li><a href="#"><span class="nav-icon">📚</span> Resources</a></li>
+        <li><a href="#"><span class="nav-icon">👥</span> Community</a></li>
+        <li><a href="#"><span class="nav-icon">🎖️</span> Certificates</a></li>
+        <li><a href="#"><span class="nav-icon">⚙️</span> Settings</a></li>
+      </ul>
+    </nav>
+    <div class="premium-box">
+      <p class="premium-title">👑 Go Premium</p>
+      <p class="premium-text">Unlock all features, AI interviews & premium content.</p>
+      <button class="upgrade-btn">Upgrade Now →</button>
+    </div>
+    <div class="help-box">
+      <span class="help-icon">🤖</span>
+      <div class="help-text">
+        <p class="help-title">Need Help?</p>
+        <p class="help-subtitle">Chat with our AI Assistant</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="topbar">
+      <div class="topbar-logo">
+        <span class="topbar-logo-icon">🚀</span>
+        <h2>SkillPath <span class="highlight-ai">AI</span></h2>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search topics, skills..." class="search-input">
+      </div>
+      <div class="notification"><span class="bell-icon">🔔</span></div>
+      <div class="user-profile">
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=SkillPathAI" alt="User profile picture" class="user-avatar">
+        <div class="user-info">
+          <p class="user-name">Alex Rivera</p>
+          <p class="user-plan">Premium Plan</p>
+        </div>
+        <span class="dropdown-arrow">▾</span>
+      </div>
+    </div>
+
+    <div class="content-wrap">
+      <div class="roadmap-page-header">
+        <h1>My Personalized Roadmap</h1>
+        <p>Web Development • Intermediate</p>
+      </div>
+
+      <div class="timeline-wrap" id="timelineWrap">
+
+        <div class="timeline-item completed" data-topic="0">
+          <span class="timeline-marker">✓</span>
+          <div class="timeline-text">
+            <h3>HTML & CSS</h3>
+            <p>Structure and style web pages</p>
+          </div>
+          <span class="timeline-status">Completed</span>
+        </div>
+        <div class="lesson-panel" id="lesson-0"></div>
+
+        <div class="timeline-item completed" data-topic="1">
+          <span class="timeline-marker">✓</span>
+          <div class="timeline-text">
+            <h3>JavaScript Basics</h3>
+            <p>Add interactivity to your websites</p>
+          </div>
+          <span class="timeline-status">Completed</span>
+        </div>
+        <div class="lesson-panel" id="lesson-1"></div>
+
+        <div class="timeline-item current" data-topic="2">
+          <span class="timeline-marker">●</span>
+          <div class="timeline-text">
+            <h3>JavaScript Functions</h3>
+            <p>Reusable blocks of code</p>
+          </div>
+          <span class="timeline-status">In Progress</span>
+        </div>
+        <div class="lesson-panel" id="lesson-2"></div>
+
+        <div class="timeline-item upcoming" data-topic="3">
+          <span class="timeline-marker">○</span>
+          <div class="timeline-text">
+            <h3>DOM Manipulation</h3>
+            <p>Work with HTML elements dynamically</p>
+          </div>
+          <span class="timeline-status">Upcoming</span>
+        </div>
+        <div class="lesson-panel" id="lesson-3"></div>
+
+        <div class="timeline-item upcoming" data-topic="4">
+          <span class="timeline-marker">○</span>
+          <div class="timeline-text">
+            <h3>APIs & Data Fetching</h3>
+            <p>Get data from external sources</p>
+          </div>
+          <span class="timeline-status">Upcoming</span>
+        </div>
+        <div class="lesson-panel" id="lesson-4"></div>
+
+        <div class="timeline-item upcoming" data-topic="5">
+          <span class="timeline-marker">○</span>
+          <div class="timeline-text">
+            <h3>React</h3>
+            <p>Build modern, component-based UIs</p>
+          </div>
+          <span class="timeline-status">Upcoming</span>
+        </div>
+        <div class="lesson-panel" id="lesson-5"></div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="dashboard.js"></script>
+<script>
+  // ===== LESSON CONTENT FOR EACH TOPIC =====
+  const lessons = {
+    0: {
+      explanation: "HTML provides the structure of a webpage, while CSS controls how it looks — colors, spacing, layout.",
+      example: "<h1>Hello World</h1>\n<p style=\"color: purple;\">Styled text</p>",
+      concepts: ["Tags & elements", "The box model", "Selectors & specificity", "Flexbox & Grid basics"]
+    },
+    1: {
+      explanation: "JavaScript lets you add logic and interactivity to a page — responding to clicks, updating content, and more.",
+      example: "let count = 0;\ncount = count + 1;\nconsole.log(count); // 1",
+      concepts: ["Variables (let, const)", "Data types", "Conditionals", "Loops"]
+    },
+    2: {
+      explanation: "A function is a reusable block of code that performs a specific task. You define it once and can call it many times.",
+      example: "function greet(name) {\n  return \"Hello, \" + name + \"!\";\n}\n\ngreet(\"Alex\"); // \"Hello, Alex!\"",
+      concepts: ["Function declaration", "Parameters", "Return values", "Arrow functions"]
+    },
+    3: {
+      explanation: "The DOM (Document Object Model) is how JavaScript 'sees' and interacts with your HTML — letting you read and change the page dynamically.",
+      example: "const title = document.querySelector('h1');\ntitle.textContent = \"Updated!\";",
+      concepts: ["querySelector", "addEventListener", "classList", "createElement"]
+    },
+    4: {
+      explanation: "APIs let your app fetch data from other services over the internet, such as weather data or user information.",
+      example: "fetch('https://api.example.com/data')\n  .then(res => res.json())\n  .then(data => console.log(data));",
+      concepts: ["fetch()", "Promises", "async/await", "JSON"]
+    },
+    5: {
+      explanation: "React is a JavaScript library for building user interfaces out of reusable, self-contained components.",
+      example: "function Welcome() {\n  return <h1>Hello, React!</h1>;\n}",
+      concepts: ["Components", "Props", "State (useState)", "JSX"]
+    }
+  };
+
+  document.querySelectorAll('.timeline-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+      const topicId = item.getAttribute('data-topic');
+      const panel = document.getElementById('lesson-' + topicId);
+      const isOpen = panel.classList.contains('open');
+
+      // Close all other panels first
+      document.querySelectorAll('.lesson-panel').forEach(function(p) {
+        p.classList.remove('open');
+      });
+
+      if (!isOpen) {
+        const data = lessons[topicId];
+        panel.innerHTML =
+          '<h4>Lesson</h4>' +
+          '<p>' + data.explanation + '</p>' +
+          '<code>' + data.example + '</code>' +
+          '<h4>Key Concepts</h4>' +
+          '<ul>' + data.concepts.map(function(c) { return '<li>' + c + '</li>'; }).join('') + '</ul>' +
+          '<div class="lesson-actions">' +
+            '<a href="practice.html" class="quiz-btn" style="display:flex;align-items:center;justify-content:center;">Take Quiz</a>' +
+            '<a href="practice.html" class="practice-btn" style="display:flex;align-items:center;justify-content:center;">Practice</a>' +
+            '<button class="complete-btn">Complete Topic</button>' +
+          '</div>';
+        panel.classList.add('open');
+      }
+    });
+  });
+</script>
+</body>
+</html>

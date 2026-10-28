@@ -26,6 +26,7 @@ loginForm.addEventListener('submit', function(event) {
   }
 
   if (isValid) {
-    console.log("Form is valid! Ready to submit to a server.");
-  }
+  console.log("Form is valid! Ready to submit to a server.");
+  window.location.href = 'landing.html';
+}
 });

@@ -19,3 +19,9 @@ const navMenu = document.querySelector('.nav-menu');
 menuToggle.addEventListener('click', function() {
   navMenu.classList.toggle('show');
 });
+document.querySelectorAll('a[href="#"]').forEach(function(link) {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    alert('Coming soon!');
+  });
+});
