@@ -1,0 +1,24 @@
+# Secrets
+.env
+firebase-service-account.json
+*.pem
+
+# Python virtual environments
+venv/
+venv_new/
+__pycache__/
+*.py[cod]
+# Environment variables
+.env.*
+!.env.example
+
+# Python cache and virtual environments
+*.py[cod]
+.venv/
+venv/
+venv_new/
+
+# IDE and operating system files
+.vscode/
+.DS_Store
+Thumbs.db

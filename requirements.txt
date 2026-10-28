@@ -1,0 +1,13 @@
+
+fastapi
+uvicorn
+sqlalchemy
+pymysql
+python-dotenv
+firebase-admin
+python-multipart
+reportlab
+openai
+qrcode[pil]
+google-genai
+certifi
